@@ -1,0 +1,16 @@
+{
+  "name": "hyper-taptap",
+  "version": "1.0.0",
+  "description": "Adds Fallout terminal sound effects to your Hyper terminal.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Smiley Barry <smiley@users.noreply.github.com>",
+  "license": "GPL-3.0",
+  "dependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/smiley/hyper-robco.git"
+  },
+}
