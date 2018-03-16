@@ -8,12 +8,20 @@ function getSoundFullPath(sound_name) {
 }
 
 if (process.type === "renderer") {
+    global = {
+        settings: electron.remote.getGlobal('settings')
+    }
+    
     function makePlayer(sound_name) {
         var audio = new Audio(getSoundFullPath(sound_name));
         audio.volume = 0.2;
         return audio;
     }
 } else {
+    global.settings = {
+        enabled: true
+    };
+    
     function makePlayer(sound_name) {
         return {
             'play': function(){}
@@ -72,6 +80,10 @@ exports.decorateTerm = (Term, { React, notify }) => {
             [
                 "keydown",
                 function(e) {
+                    if (!global.settings.enabled) {
+                        return true;
+                    }
+                    
                     var repeatable = false;
                     var soundList = SOUNDS.SINGLE;
                     switch (e.key) {
@@ -119,13 +131,35 @@ exports.decorateTerm = (Term, { React, notify }) => {
 };
 
 exports.middleware = (store) => (next) => (action) => {
-    if (action.type === 'TERM_GROUP_REQUEST') {
-        SOUNDS.EVENTS.CLOSE.currentTime = 0.0;
-        SOUNDS.EVENTS.OPEN.play();
-    }
-    if (action.type === 'TERM_GROUP_EXIT') {
-        SOUNDS.EVENTS.CLOSE.currentTime = 0.0;
-        SOUNDS.EVENTS.CLOSE.play();
+    if (global.settings.enabled) {
+        if (action.type === 'TERM_GROUP_REQUEST') {
+            SOUNDS.EVENTS.CLOSE.currentTime = 0.0;
+            SOUNDS.EVENTS.OPEN.play();
+        }
+        if (action.type === 'TERM_GROUP_EXIT') {
+            SOUNDS.EVENTS.CLOSE.currentTime = 0.0;
+            SOUNDS.EVENTS.CLOSE.play();
+        }
     }
     next(action);
 };
+
+exports.decorateMenu = menu =>
+  menu.map(
+    item => {
+      if (item.label !== 'Plugins') return item;
+      const newItem = Object.assign({}, item);
+      newItem.submenu = newItem.submenu.concat(
+        {
+          label: 'Terminal sounds',
+          checked: global.settings.enabled,
+          type: 'checkbox',
+          click: (clickedItem) => {
+            global.settings.enabled = !global.settings.enabled;
+            clickedItem.checked = global.settings.enabled;
+          },
+        }
+      );
+      return newItem;
+    }
+  );
