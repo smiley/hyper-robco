@@ -1,3 +1,6 @@
+# BROKEN
+Broken since Hyper migrated from `hterm` to `xterm.js`. Sadly it's not an easy fix, but hopefully I'll get to fixing it at some point.
+
 # RobCo™ Vault Terminal Adaptation Program™ (VTAP)
 _Still using that out-of-date, silent terminal? Wishing your machine clicked like the rest? Prepare For The Future™ and upgrade today for FREE!*_
 
